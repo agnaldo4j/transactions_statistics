@@ -15,6 +15,8 @@ import java.util.Timer;
 @Component
 public class PrevalentSystemAdapter implements PersistenceAdapter {
 
+    public static final int UPDATE_STATISTIC_PERIOD = 5000;
+    public static final int UPDATE_STATISTIC_DELAY = 100;
     private PrevalentSystem<System> system;
     private final Timer timer;
 
@@ -30,7 +32,7 @@ public class PrevalentSystemAdapter implements PersistenceAdapter {
         this.system = new PrevalentSystem<>(storageFile);
         this.system.load(new System());
         this.timer = new Timer("statisticUpdater");
-        this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, now), 100, 5000);
+        this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, now), UPDATE_STATISTIC_DELAY, UPDATE_STATISTIC_PERIOD);
     }
 
     public void destroyState() throws IOException {
@@ -40,7 +42,7 @@ public class PrevalentSystemAdapter implements PersistenceAdapter {
 
     public void reloadState(ZonedDateTime now) throws IOException, ClassNotFoundException {
         system.load(new System());
-        this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, now), 100, 5000);
+        this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, now), UPDATE_STATISTIC_DELAY, UPDATE_STATISTIC_PERIOD);
     }
 
     @Override

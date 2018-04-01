@@ -14,6 +14,7 @@ import java.util.TimerTask;
 public class CalculateStatisticsTask extends TimerTask {
 
     private final static Logger logger = LoggerFactory.getLogger(CalculateStatisticsTask.class);
+    public static final int PERIOD_FOR_STATISTICS_SECONDS = 60;
     private final PrevalentSystem<System> system;
     private ZonedDateTime now;
 
@@ -25,7 +26,7 @@ public class CalculateStatisticsTask extends TimerTask {
 
     public void run() {
         try {
-            long time = now.minusSeconds(60).toInstant().toEpochMilli();
+            long time = now.minusSeconds(PERIOD_FOR_STATISTICS_SECONDS).toInstant().toEpochMilli();
             Statistic newStatistic = system.execute(new CalculateStatistics(time));
             system.execute(new UpdateStatistic(newStatistic));
             this.now = ZonedDateTime.now( ZoneOffset.UTC );

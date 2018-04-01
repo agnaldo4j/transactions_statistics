@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 
-public class TransactionView {
+public class TransactionInput {
 
     private final long timestamp;
 
     private final double amount;
 
     @JsonCreator
-    public TransactionView(
+    public TransactionInput(
         @JsonProperty("amount") @NotNull double amount,
         @JsonProperty("timestamp") long timestamp
     ) {

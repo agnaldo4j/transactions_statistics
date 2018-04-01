@@ -4,7 +4,7 @@ import com.agnaldo4j.restapi.json.APIViews;
 import com.agnaldo4j.domain.entities.Statistic;
 import com.fasterxml.jackson.annotation.JsonView;
 
-public class StatisticsView {
+public class StatisticsOutput {
     @JsonView(APIViews.Public.class)
     private long count;
 
@@ -20,7 +20,7 @@ public class StatisticsView {
     @JsonView(APIViews.Public.class)
     private double avg;
 
-    public StatisticsView(Statistic statistic) {
+    public StatisticsOutput(Statistic statistic) {
         this.count = statistic.count();
         this.avg = statistic.avg();
         this.min = statistic.min();

@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: development
+
+  output.ansi.enabled: ALWAYS
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    serialization.WRITE_DATES_AS_TIMESTAMPS: false
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      path-mapping:
+       info: /health/check/lb
+       health: /health/check
+  endpoint:
+    health:
+      show-details: always
+
+persistence:
+  prevalent:
+    STORAGE_FILE: data.dat

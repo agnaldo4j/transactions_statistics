@@ -1,0 +1,70 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.0.RELEASE'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+def getCurrentVersion() {
+    return '1.0'
+}
+
+group 'com.agnaldo4j'
+version getCurrentVersion()
+
+description 'Simple Test'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+springBoot {
+    buildInfo {
+        properties {
+            version = getCurrentVersion()
+        }
+    }
+}
+
+dependencies {
+    compile('net.logstash.logback:logstash-logback-encoder:4.11')
+
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-json')
+
+    // Should speed up load time on boot
+    compileOnly("org.springframework:spring-context-indexer:5.0.4.RELEASE")
+    compileOnly('org.projectlombok:lombok:1.16.20')
+    compileOnly('javax.annotation:jsr250-api:1.0')
+    compile('javax.xml.bind:jaxb-api:2.3.0')
+
+    testCompile('junit:junit')
+    testCompileOnly("org.springframework:spring-context-indexer:5.0.4.RELEASE")
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('com.github.npathai:hamcrest-optional:1.0')
+    testCompile('org.powermock:powermock-module-junit4:1.7.3')
+    testCompile('org.powermock:powermock-api-mockito2:2.0.0-beta.5')
+}
+
+bootJar {
+    archiveName 'agnaldo4j.jar'
+    manifest {
+        attributes "Implementation-Version": getCurrentVersion()
+    }
+}

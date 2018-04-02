@@ -26,6 +26,11 @@ public class PrevalentSystemAdapterTest {
     }
 
     private void initialState(PrevalentSystemAdapter prevalentSystemAdapter) throws Exception {
+        prevalentSystemAdapter.save(new Transaction(-100, timeMinus(200)));
+        prevalentSystemAdapter.save(new Transaction(-100, timeMinus(180)));
+        prevalentSystemAdapter.save(new Transaction(-100, timeMinus(150)));
+        prevalentSystemAdapter.save(new Transaction(-100, timeMinus(120)));
+        prevalentSystemAdapter.save(new Transaction(-100, timeMinus(90)));
         prevalentSystemAdapter.save(new Transaction(-100, timeMinus(80)));
         prevalentSystemAdapter.save(new Transaction(200, timeMinus(75)));
         prevalentSystemAdapter.save(new Transaction(23, timeMinus(70)));
@@ -74,6 +79,18 @@ public class PrevalentSystemAdapterTest {
         assertEquals(2.916, statistic.avg(), 0.001);
         assertEquals(25, statistic.max(), 0);
         assertEquals(-17, statistic.min(), 0);
+    }
+
+    @Test
+    public void cleanTransactionsAndGetCount() throws Exception {
+        PrevalentSystemAdapter prevalentSystemAdapter = new PrevalentSystemAdapter("data4.dat", this.clockSystem);
+        prevalentSystemAdapter.reloadState();
+        initialState(prevalentSystemAdapter);
+        waitMillis();
+        assertEquals(21, prevalentSystemAdapter.countTransactions());
+        prevalentSystemAdapter.cleanOldTransactions(clockSystem.nowMinusSeconds(120));
+        prevalentSystemAdapter.destroyState();
+        assertEquals(18, prevalentSystemAdapter.countTransactions());
     }
 
     @Test

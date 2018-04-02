@@ -9,12 +9,20 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class System implements Serializable {
-    private final Set<Transaction> transactions;
+    private Set<Transaction> transactions;
     private Statistic statistic;
 
     public System() {
         this.transactions = new LinkedHashSet<>();
         this.statistic = new Statistic();
+    }
+
+    public int transactionsCount() {
+        return this.transactions.size();
+    }
+
+    public void updateTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     public void addTransaction(Transaction transaction) {

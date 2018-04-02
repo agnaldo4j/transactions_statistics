@@ -3,6 +3,8 @@ package com.agnaldo4j.persistence.adapter;
 import com.agnaldo4j.domain.entities.Statistic;
 import com.agnaldo4j.domain.entities.Transaction;
 import com.agnaldo4j.domain.persistence.PersistenceAdapter;
+import com.agnaldo4j.persistence.adapter.command.CleanOldTransactions;
+import com.agnaldo4j.persistence.adapter.query.CountTransactions;
 import org.springframework.stereotype.Component;
 import com.agnaldo4j.persistence.PrevalentSystem;
 import com.agnaldo4j.persistence.adapter.command.SaveTransaction;
@@ -15,7 +17,8 @@ import java.util.Timer;
 @Component
 public class PrevalentSystemAdapter implements PersistenceAdapter {
 
-    public static final int UPDATE_STATISTIC_PERIOD = 1000;
+    public static final int CLAEN_TRANSACTION_PERIOD = 180 * 1000;
+    public static final int UPDATE_STATISTIC_PERIOD = 3000;
     public static final int UPDATE_STATISTIC_DELAY = 100;
     private PrevalentSystem<System> system;
     private final Timer timer;
@@ -35,6 +38,8 @@ public class PrevalentSystemAdapter implements PersistenceAdapter {
         this.clockSystem = clockSystem;
         this.timer = new Timer("statisticUpdater");
         this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, clockSystem), UPDATE_STATISTIC_DELAY, UPDATE_STATISTIC_PERIOD);
+        this.timer.scheduleAtFixedRate(new CleanOldTransactionsTask(system, clockSystem), CLAEN_TRANSACTION_PERIOD, CLAEN_TRANSACTION_PERIOD);
+
     }
 
     public void destroyState() throws IOException {
@@ -45,6 +50,15 @@ public class PrevalentSystemAdapter implements PersistenceAdapter {
     public void reloadState() throws IOException, ClassNotFoundException {
         system.load(new System());
         this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, clockSystem), UPDATE_STATISTIC_DELAY, UPDATE_STATISTIC_PERIOD);
+        this.timer.scheduleAtFixedRate(new CleanOldTransactionsTask(system, clockSystem), CLAEN_TRANSACTION_PERIOD, CLAEN_TRANSACTION_PERIOD);
+    }
+
+    public int countTransactions() {
+        return system.execute(new CountTransactions());
+    }
+
+    public void cleanOldTransactions(long time) throws IOException {
+        system.execute(new CleanOldTransactions(time));
     }
 
     @Override

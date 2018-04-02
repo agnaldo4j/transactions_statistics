@@ -4,6 +4,9 @@ import com.agnaldo4j.restapi.json.APIViews;
 import com.agnaldo4j.domain.entities.Statistic;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class StatisticsOutput {
     @JsonView(APIViews.Public.class)
     private long count;
@@ -22,9 +25,15 @@ public class StatisticsOutput {
 
     public StatisticsOutput(Statistic statistic) {
         this.count = statistic.count();
-        this.avg = statistic.avg();
-        this.min = statistic.min();
-        this.max = statistic.max();
-        this.sum = statistic.sum();
+        this.avg = round(statistic.avg());
+        this.min = round(statistic.min());
+        this.max = round(statistic.max());
+        this.sum = round(statistic.sum());
+    }
+
+    private double round(double value) {
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }

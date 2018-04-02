@@ -31,7 +31,7 @@ public class PrevalentSystem<STATE> {
         command.execute(state);
     }
 
-    public synchronized <RESULT> RESULT execute(Query<STATE, RESULT> query) {
+    public <RESULT> RESULT execute(Query<STATE, RESULT> query) {
         return query.execute(state);
     }
 

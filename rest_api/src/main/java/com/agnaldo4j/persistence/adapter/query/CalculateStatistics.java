@@ -5,6 +5,8 @@ import com.agnaldo4j.domain.entities.Transaction;
 import com.agnaldo4j.persistence.Query;
 import com.agnaldo4j.persistence.adapter.System;
 
+import java.util.Iterator;
+
 public class CalculateStatistics implements Query<System, Statistic> {
 
     private final Long initialTime;
@@ -17,11 +19,8 @@ public class CalculateStatistics implements Query<System, Statistic> {
 
     @Override
     public Statistic execute(System system) {
-        Transaction[] transactions = system.transactions();
-        int totalElements = transactions.length - 1;
-        for (int i = totalElements; i > -1; i--) {
-            calculateWhenInTimeRange(transactions[i]);
-        }
+        Iterator<Transaction> transactions = system.transactions();
+        while (transactions.hasNext()) calculateWhenInTimeRange(transactions.next());
         return statistic;
     }
 

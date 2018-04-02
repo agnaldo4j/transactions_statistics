@@ -15,24 +15,26 @@ import java.util.Timer;
 @Component
 public class PrevalentSystemAdapter implements PersistenceAdapter {
 
-    public static final int UPDATE_STATISTIC_PERIOD = 5000;
+    public static final int UPDATE_STATISTIC_PERIOD = 1000;
     public static final int UPDATE_STATISTIC_DELAY = 100;
     private PrevalentSystem<System> system;
     private final Timer timer;
+    private final ClockSystem clockSystem;
 
     public PrevalentSystemAdapter() throws IOException, ClassNotFoundException {
         this("data.dat");
     }
 
     public PrevalentSystemAdapter(String storageFile) throws IOException, ClassNotFoundException {
-        this(storageFile, null);
+        this(storageFile, new ZoneDateTimeClockSystem());
     }
 
-    public PrevalentSystemAdapter(String storageFile, ZonedDateTime now) throws IOException, ClassNotFoundException {
+    public PrevalentSystemAdapter(String storageFile, ClockSystem clockSystem) throws IOException, ClassNotFoundException {
         this.system = new PrevalentSystem<>(storageFile);
         this.system.load(new System());
+        this.clockSystem = clockSystem;
         this.timer = new Timer("statisticUpdater");
-        this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, now), UPDATE_STATISTIC_DELAY, UPDATE_STATISTIC_PERIOD);
+        this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, clockSystem), UPDATE_STATISTIC_DELAY, UPDATE_STATISTIC_PERIOD);
     }
 
     public void destroyState() throws IOException {
@@ -40,9 +42,19 @@ public class PrevalentSystemAdapter implements PersistenceAdapter {
         system.destroyState();
     }
 
-    public void reloadState(ZonedDateTime now) throws IOException, ClassNotFoundException {
+    public void reloadState() throws IOException, ClassNotFoundException {
         system.load(new System());
-        this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, now), UPDATE_STATISTIC_DELAY, UPDATE_STATISTIC_PERIOD);
+        this.timer.scheduleAtFixedRate(new CalculateStatisticsTask(system, clockSystem), UPDATE_STATISTIC_DELAY, UPDATE_STATISTIC_PERIOD);
+    }
+
+    @Override
+    public ZonedDateTime now() {
+        return this.clockSystem.now();
+    }
+
+    @Override
+    public long nowMinusSeconds(long seconds) {
+        return this.clockSystem.nowMinusSeconds(seconds);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class StatisticService {
         try {
             return persistenceAdapter.statistic();
         } catch (IOException e) {
-            throw new PersistenceException("Error when try persit transaction");
+            throw new PersistenceException("Error when try retrieve statistic");
         }
     }
 }

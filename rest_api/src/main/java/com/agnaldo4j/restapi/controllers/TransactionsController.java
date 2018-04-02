@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @RestController
-public class Transactions {
+public class TransactionsController {
 
     @Autowired
     private TransactionService transactionService;

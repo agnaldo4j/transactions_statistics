@@ -31,7 +31,7 @@ public class PrevalentSystem<STATE> {
         command.execute(state);
     }
 
-    public synchronized  <RESULT> RESULT execute(Query<STATE, RESULT> query) {
+    public synchronized <RESULT> RESULT execute(Query<STATE, RESULT> query) {
         return query.execute(state);
     }
 
@@ -41,7 +41,8 @@ public class PrevalentSystem<STATE> {
         journal = new ObjectOutputStream(new FileOutputStream(tmpFile));
         writeToJournal(state);
         if (this.stateFile.exists()) this.stateFile.delete();
-        if(!tmpFile.renameTo(this.stateFile)) throw new IOException("Unable to rename " + tmpFile + " to " + this.stateFile);
+        if (!tmpFile.renameTo(this.stateFile))
+            throw new IOException("Unable to rename " + tmpFile + " to " + this.stateFile);
     }
 
     private STATE restoreState(STATE initialState, File tempFile) throws IOException, ClassNotFoundException {
@@ -65,7 +66,7 @@ public class PrevalentSystem<STATE> {
     private void restoreCommands(STATE state, ObjectInputStream input) throws IOException, ClassNotFoundException {
         try {
             while (true) ((Command<STATE>) input.readObject()).execute(state);
-        } catch(EOFException e) {}
+        } catch (EOFException e) { }
     }
 
     private void writeToJournal(STATE state) throws IOException {

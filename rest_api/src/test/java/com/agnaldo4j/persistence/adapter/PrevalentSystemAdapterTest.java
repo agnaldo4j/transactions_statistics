@@ -11,14 +11,14 @@ import static org.junit.Assert.assertEquals;
 
 public class PrevalentSystemAdapterTest {
 
-    private final ZonedDateTime zonedDateTime;
+    private final ClockSystem clockSystem;
 
     public PrevalentSystemAdapterTest() {
-        zonedDateTime = ZonedDateTime.ofInstant( Instant.ofEpochMilli(1522578899094L), ZoneOffset.UTC);
+        this.clockSystem = new MockClockSystem();
     }
 
     private long timeMinus(long seconds) {
-        return zonedDateTime.minusSeconds(seconds).toInstant().toEpochMilli();
+        return this.clockSystem.nowMinusSeconds(seconds);
     }
 
     private void waitMillis() throws Exception {
@@ -46,8 +46,8 @@ public class PrevalentSystemAdapterTest {
 
     @Test
     public void saveTransactionsAndGetStatistics() throws Exception {
-        PrevalentSystemAdapter prevalentSystemAdapter = new PrevalentSystemAdapter("data1.dat", zonedDateTime);
-        prevalentSystemAdapter.reloadState(zonedDateTime);
+        PrevalentSystemAdapter prevalentSystemAdapter = new PrevalentSystemAdapter("data1.dat", this.clockSystem);
+        prevalentSystemAdapter.reloadState();
         initialState(prevalentSystemAdapter);
         waitMillis();
         Statistic statistic = prevalentSystemAdapter.statistic();
@@ -61,12 +61,12 @@ public class PrevalentSystemAdapterTest {
 
     @Test
     public void reloadTransactionsAndGetStatistics() throws Exception {
-        PrevalentSystemAdapter prevalentSystemAdapter = new PrevalentSystemAdapter("data2.dat", zonedDateTime);
-        prevalentSystemAdapter.reloadState(zonedDateTime);
+        PrevalentSystemAdapter prevalentSystemAdapter = new PrevalentSystemAdapter("data2.dat", this.clockSystem);
+        prevalentSystemAdapter.reloadState();
         initialState(prevalentSystemAdapter);
         waitMillis();
-        prevalentSystemAdapter = new PrevalentSystemAdapter("data2.dat", zonedDateTime);
-        prevalentSystemAdapter.reloadState(zonedDateTime);
+        prevalentSystemAdapter = new PrevalentSystemAdapter("data2.dat", this.clockSystem);
+        prevalentSystemAdapter.reloadState();
         Statistic statistic = prevalentSystemAdapter.statistic();
         prevalentSystemAdapter.destroyState();
         assertEquals(12, statistic.count());
@@ -78,8 +78,8 @@ public class PrevalentSystemAdapterTest {
 
     @Test
     public void emptyStateAndGetStatistics() throws Exception {
-        PrevalentSystemAdapter prevalentSystemAdapter = new PrevalentSystemAdapter("data3.dat", zonedDateTime);
-        prevalentSystemAdapter.reloadState(zonedDateTime);
+        PrevalentSystemAdapter prevalentSystemAdapter = new PrevalentSystemAdapter("data3.dat", this.clockSystem);
+        prevalentSystemAdapter.reloadState();
         Statistic statistic = prevalentSystemAdapter.statistic();
         prevalentSystemAdapter.destroyState();
         assertEquals(0, statistic.count());

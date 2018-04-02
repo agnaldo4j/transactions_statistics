@@ -15,7 +15,7 @@ public class TransactionInput {
     @JsonCreator
     public TransactionInput(
         @JsonProperty("amount") @NotNull double amount,
-        @JsonProperty("timestamp") long timestamp
+        @JsonProperty("timestamp") @NotNull long timestamp
     ) {
         this.amount = amount;
         this.timestamp = timestamp;

@@ -63,7 +63,7 @@ dependencies {
 }
 
 bootJar {
-    archiveName 'agnaldo4j.jar'
+    archiveName 'transactions.jar'
     manifest {
         attributes "Implementation-Version": getCurrentVersion()
     }
